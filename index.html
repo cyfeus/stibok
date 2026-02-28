@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>СТІБОК</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet"/>
+
+  <!-- GSAP -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  
+</head>
+    <div class="modal" id="modal">
+      <div class="modal__overlay" id="modalOverlay"></div>
+
+      <div class="modal__inner">
+        <button class="modal__close" id="modalClose">✕</button>
+
+        <div class="modal__carousel" id="modalCarousel">
+          <!-- сюда будем вставлять картинки через JS -->
+        </div>
+
+        <div class="modal__nav">
+          <button class="modal__prev" type="button"><span>‹</span></button>
+          <button class="modal__next" type="button"><span>›</span></button>
+        </div>
+      </div>
+    </div>
+<body>
+
+  <!-- Loader / Intro -->
+  <div class="loader" id="loader">
+    <div class="intro">
+      <!-- ВАЖНО: логотип как inline SVG внутри контейнера -->
+      <div class="logo-big" id="logoBig">
+        <svg viewBox="0 0 943 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M69.1336 187.088C59.275 187.088 50.0942 185.486 41.5911 182.282C33.2113 178.955 25.8789 174.334 19.594 168.419C13.4324 162.38 8.6263 155.294 5.17578 147.161C1.72526 139.028 0 130.155 0 120.543C0 110.93 1.72526 102.058 5.17578 93.9243C8.6263 85.791 13.494 78.7667 19.7789 72.8515C26.0638 66.8131 33.3961 62.1919 41.7759 58.9878C50.1558 55.6605 59.3366 53.9969 69.3185 53.9969C79.9165 53.9969 89.5903 55.8454 98.3398 59.5424C107.089 63.1161 114.483 68.4767 120.522 75.6243L104.994 90.2274C100.312 85.1748 95.0742 81.4162 89.2822 78.9515C83.4903 76.3637 77.2054 75.0697 70.4276 75.0697C63.6498 75.0697 57.4265 76.1788 51.7578 78.397C46.2123 80.6152 41.3446 83.7576 37.1547 87.8243C33.088 91.891 29.884 96.6971 27.5425 102.243C25.3244 107.788 24.2153 113.888 24.2153 120.543C24.2153 127.197 25.3244 133.297 27.5425 138.843C29.884 144.388 33.088 149.194 37.1547 153.261C41.3446 157.328 46.2123 160.47 51.7578 162.688C57.4265 164.906 63.6498 166.016 70.4276 166.016C77.2054 166.016 83.4903 164.783 89.2822 162.319C95.0742 159.731 100.312 155.849 104.994 150.673L120.522 165.461C114.483 172.485 107.089 177.846 98.3398 181.543C89.5903 185.24 79.8549 187.088 69.1336 187.088Z" fill="currentColor"/>
+        <path d="M214.775 185.24V70.2636L220.505 76.1788H172.074V55.8454H281.505V76.1788H233.075L238.62 70.2636V185.24H214.775Z" fill="currentColor"/>
+        <path d="M445.926 185.24V55.8454H546.669V75.6243H469.587V107.418H507.85C523.378 107.418 535.146 110.684 543.157 117.215C551.29 123.623 555.357 132.989 555.357 145.312C555.357 158.005 550.859 167.864 541.863 174.888C532.99 181.789 520.42 185.24 504.153 185.24H445.926ZM469.587 166.755H502.859C512.102 166.755 519.126 164.968 523.932 161.394C528.738 157.821 531.141 152.645 531.141 145.867C531.141 132.558 521.714 125.903 502.859 125.903H469.587V166.755Z" fill="currentColor"/>
+        <path d="M687.959 187.088C677.853 187.088 668.549 185.425 660.046 182.097C651.543 178.77 644.149 174.149 637.864 168.234C631.579 162.195 626.712 155.171 623.261 147.161C619.811 139.028 618.085 130.155 618.085 120.543C618.085 110.93 619.811 102.119 623.261 94.1092C626.712 85.9758 631.579 78.9515 637.864 73.0364C644.149 66.998 651.543 62.3151 660.046 58.9878C668.549 55.6605 677.792 53.9969 687.774 53.9969C697.879 53.9969 707.121 55.6605 715.501 58.9878C724.004 62.3151 731.398 66.998 737.683 73.0364C743.968 78.9515 748.836 85.9758 752.286 94.1092C755.737 102.119 757.462 110.93 757.462 120.543C757.462 130.155 755.737 139.028 752.286 147.161C748.836 155.294 743.968 162.319 737.683 168.234C731.398 174.149 724.004 178.77 715.501 182.097C707.121 185.425 697.94 187.088 687.959 187.088ZM687.774 166.016C694.305 166.016 700.343 164.906 705.889 162.688C711.434 160.47 716.24 157.328 720.307 153.261C724.374 149.071 727.516 144.265 729.734 138.843C732.076 133.297 733.247 127.197 733.247 120.543C733.247 113.888 732.076 107.85 729.734 102.427C727.516 96.8819 724.374 92.0758 720.307 88.0092C716.24 83.8192 711.434 80.6152 705.889 78.397C700.343 76.1788 694.305 75.0697 687.774 75.0697C681.242 75.0697 675.204 76.1788 669.658 78.397C664.236 80.6152 659.43 83.8192 655.24 88.0092C651.173 92.0758 647.969 96.8819 645.628 102.427C643.41 107.85 642.301 113.888 642.301 120.543C642.301 127.074 643.41 133.112 645.628 138.658C647.969 144.203 651.173 149.071 655.24 153.261C659.307 157.328 664.113 160.47 669.658 162.688C675.204 164.906 681.242 166.016 687.774 166.016Z" fill="currentColor"/>
+        <path d="M915.827 185.24L872.018 122.206L891.427 110.191L943 185.24H915.827ZM830.242 185.24V55.8454H853.903V185.24H830.242ZM846.693 130.709V110.006H890.318V130.709H846.693ZM893.645 123.315L871.648 120.358L915.827 55.8454H941.336L893.645 123.315Z" fill="currentColor"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M363.011 18.9948C364.259 12.0604 368.902 -1.42275 377.491 0.122231C388.229 2.05463 390.928 10.162 387.171 23.3423C384.164 33.8867 376.944 57.0668 373.709 67.339L321.585 249.18L363.011 18.9948ZM377.59 8.41096C374.03 7.62777 369.903 12.634 368.371 19.5923C366.84 26.5505 368.483 32.826 372.044 33.6103C375.604 34.394 379.733 29.3894 381.265 22.4311C382.797 15.4725 381.151 9.19472 377.59 8.41096Z" fill="currentColor"/>
+        </svg>
+
+      </div>
+
+      <p class="loader-text" id="loaderText">
+        Все починається зі стібка. Але...
+      </p>
+
+      <button class="start-btn" id="startBtn">РОЗПОЧАТИ</button>
+
+      <p class="reveal-text" id="revealText">
+        Справжнє починається із бажання створювати
+      </p>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="header-inner">
+      <!-- место, куда прилетит логотип -->
+      <div class="logo-slot" id="logoSlot">
+        <!-- сюда JS в конце положит статичный логотип -->
+      </div>
+
+      <!-- машинка (пока файл можно назвать machine.png) -->
+      <img class="machine" id="machine" src="machine.png" alt="Швейна машинка" />
+      <button class="burger-hit" id="burgerHit" type="button" aria-label="Меню">
+        <div class="burger burger--needles" id="burger">
+        <div class="needle-row needle-row--1">
+          <svg class="needle" viewBox="0 0 31 114" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M18.8251 8.63167C19.3922 5.48052 21.5019 -0.64653 25.4051 0.0555445C30.2845 0.933669 31.5111 4.61782 29.8036 10.6073C28.4375 15.3989 25.1561 25.9324 23.6864 30.6003L0 113.233L18.8251 8.63167ZM25.4501 3.82213C23.832 3.46623 21.9566 5.74115 21.2606 8.90316C20.5647 12.0651 21.3116 14.9168 22.9296 15.2732C24.5476 15.6294 26.4239 13.3552 27.12 10.1932C27.816 7.03103 27.0682 4.17828 25.4501 3.82213Z" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <div class="needle-row needle-row--2">
+          <svg class="needle" viewBox="0 0 31 114" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M18.8251 8.63167C19.3922 5.48052 21.5019 -0.64653 25.4051 0.0555445C30.2845 0.933669 31.5111 4.61782 29.8036 10.6073C28.4375 15.3989 25.1561 25.9324 23.6864 30.6003L0 113.233L18.8251 8.63167ZM25.4501 3.82213C23.832 3.46623 21.9566 5.74115 21.2606 8.90316C20.5647 12.0651 21.3116 14.9168 22.9296 15.2732C24.5476 15.6294 26.4239 13.3552 27.12 10.1932C27.816 7.03103 27.0682 4.17828 25.4501 3.82213Z" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <div class="needle-row needle-row--3">
+          <svg class="needle" viewBox="0 0 31 114"fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M18.8251 8.63167C19.3922 5.48052 21.5019 -0.64653 25.4051 0.0555445C30.2845 0.933669 31.5111 4.61782 29.8036 10.6073C28.4375 15.3989 25.1561 25.9324 23.6864 30.6003L0 113.233L18.8251 8.63167ZM25.4501 3.82213C23.832 3.46623 21.9566 5.74115 21.2606 8.90316C20.5647 12.0651 21.3116 14.9168 22.9296 15.2732C24.5476 15.6294 26.4239 13.3552 27.12 10.1932C27.816 7.03103 27.0682 4.17828 25.4501 3.82213Z" fill="currentColor"/>
+          </svg>
+        </div>
+        </div>
+      </button>
+      <nav class="menu" id="menu" aria-hidden="true">
+        <ul class="menu__list">
+          <li><a class="menu__link" href="#tshirt">Футболки</a></li>
+          <li><a class="menu__link" href="#dress">Плаття</a></li>
+          <li><a class="menu__link" href="#suit">Костюми</a></li>
+          <li><a class="menu__link" href="#dog">Інше</a></li>
+          <!-- <li><a class="menu__link" href="#footer">Зв'язатися з нами</a></li> -->
+        </ul>
+        <div class="menu__contacts">
+          <button class="contact-circle" data-contact="phone" type="button" aria-label="Телефон">
+            <!-- телефон svg -->
+            <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.8-.4 1.2-.3 1 .3 2 .5 3 .5.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.3 21 3 13.7 3 4c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1 .2 2 .5 3 .1.4 0 .9-.3 1.2l-2 2.6z"/></svg>
+          </button>
+
+          <button class="contact-circle" data-contact="tg" type="button" aria-label="Telegram">
+            <!-- telegram svg -->
+            <svg viewBox="0 0 24 24"><path d="M9.04 15.47l-.38 5.35c.55 0 .79-.24 1.07-.52l2.56-2.45 5.3 3.88c.97.54 1.66.26 1.92-.9l3.48-16.3c.34-1.54-.56-2.14-1.5-1.8L1.62 9.4c-1.49.58-1.47 1.41-.25 1.79l5.7 1.78 13.24-8.34c.62-.38 1.18-.17.72.23"/></svg>
+          </button>
+
+          <button class="contact-circle" data-contact="viber" type="button" aria-label="Viber">
+            <!-- viber svg -->
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 5.9 2 10.6c0 2.5 1.2 4.7 3.2 6.3L4 22l5.4-1.7c.8.2 1.7.3 2.6.3 5.5 0 10-3.9 10-8.6S17.5 2 12 2z"/></svg>
+          </button>
+        </div>
+      </nav>
+
+      <div class="contact-pop" id="contactPop" aria-hidden="true">
+        <button class="contact-pop__close" type="button" aria-label="Закрити">×</button>
+        <div class="contact-pop__body" id="contactPopBody"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Background FX (одна машинка на все сцены) -->
+  <div class="bgfx" id="bgfx" aria-hidden="true">
+    <img class="bg-machine" id="bgMachine" src="machine.png" alt="">
+    <img class="bg-threads" id="bgThreads" src="threads.png" alt="">
+  </div>
+
+  <!-- Main content placeholder -->
+  <main class="page">
+  <section class="scene scene--header-trigger"></section>
+
+  <section class="scene scene--tshirt" id="tshirt" data-scene="tshirt">
+    <h2 class="scene__title">Все починається з форми.</h2>
+  <div class="scene__content">
+    <div class="scene__text ">
+      <div class="scene__body">
+        <p>Не достатньо зробити стібок.</p>
+        <p>Потрібно відчути тканину.</p>
+        <p>Побачити форму.</p>
+        <p>Захотіти створити щось своє.</p>
+      </div>
+    </div>
+
+    <button class="cloth-card" data-cloth="tshirt">
+      <span class="cloth-card__media">
+        <img src="CLOTH_TSHIRT.png" class="cloth-card__img">
+      </span>
+    </button>
+
+  </div>
+  </section>
+  <section class="scene scene--dress scene--img-left" id="dress" data-scene="dress">
+    <h2 class="scene__title">Майстерність — це більше, ніж шви</h2>
+  <div class="scene__content">
+    <div class="scene__text">
+      <div class="scene__body">
+        <p>Це терпіння.</p>
+        <p>Це увага до деталей.</p>
+        <p>Це краса, що народжується з руху голки.</p>
+      </div>
+    </div>
+
+    <button class="cloth-card" data-cloth="dress">
+      <span class="cloth-card__media">
+        <img src="CLOTH_DRESS.png" class="cloth-card__img">
+      </span>
+    </button>
+
+  </div>
+  </section>
+  <section class="scene scene--suit" id="suit" data-scene="suit">
+    <h2 class="scene__title">Серйозність має форму.</h2>
+  <div class="scene__content">
+    <div class="scene__text">
+      <div class="scene__body">
+        <p>Кожен рядок — це впевненість.</p>
+        <p>Кожна лінія — характер.</p>
+        <p>Кожен виріб — історія людини.</p>
+      </div>
+    </div>
+
+    <button class="cloth-card" data-cloth="suit">
+      <span class="cloth-card__media">
+        <img src="CLOTH_SUIT.png" class="cloth-card__img">
+      </span>
+    </button>
+
+  </div>
+  </section>
+  <section class="scene scene--dog-suit scene--img-left" id="dog" data-scene="dog-suit">
+    <h2 class="scene__title">Іноді стиль — це гра.</h2>
+  <div class="scene__content">
+    <div class="scene__text">
+      <div class="scene__body">
+        <p>Незвичне.</p>
+        <p>Сміливе.</p>
+        <p>Те, що викликає усмішку.</p>
+        <p>Бо майстерність — це свобода</p>
+      </div>
+    </div>
+
+    <button class="cloth-card" data-cloth="dog-suit">
+      <span class="cloth-card__media">
+        <img src="CLOTH_DOG.png" class="cloth-card__img">
+      </span>
+    </button>
+
+  </div>
+  </section>
+
+  <section class="scene scene--footer" id="footer" data-scene="footer" data-theme="dark">
+  <div class="footer">
+    <p class="footer__tagline">СТІБОК — маленький рух, що створює велике.</p>
+
+    <div class="footer__contacts">
+
+        <a class="contact-btn" href="tel:+380XXXXXXXXX" aria-label="Телефон">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6.6 10.8c1.8 3.6 3 4.8 6.6 6.6l2.2-2.2c.3-.3.7-.4 1.1-.3 1.2.4 2.5.6 3.8.6.6 0 1 .4 1 1V21c0 .6-.4 1-1 1C10.3 22 2 13.7 2 3c0-.6.4-1 1-1h4.5c.6 0 1 .4 1 1 0 1.3.2 2.6.6 3.8.1.4 0 .8-.3 1.1l-2.2 2.9z"/>
+          </svg>
+        </a>
+
+        <a class="contact-btn" href="#" aria-label="Telegram" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9.04 15.34l-.39 4.1c.56 0 .8-.24 1.08-.52l2.6-2.47 5.39 3.94c.99.55 1.69.26 1.95-.92l3.53-16.55.01-.01c.31-1.45-.52-2.02-1.49-1.66L1.3 9.2c-1.4.55-1.38 1.33-.24 1.69l5.26 1.64L18.8 5.5c.59-.39 1.13-.17.69.22"/>
+          </svg>
+        </a>
+
+        <a class="contact-btn" href="#" aria-label="Viber" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.5 3h-17C2.7 3 2 3.7 2 4.5v11c0 .8.7 1.5 1.5 1.5H6v3l3.6-3H20.5c.8 0 1.5-.7 1.5-1.5v-11C22 3.7 21.3 3 20.5 3zm-3.3 9.7c-.2.5-.8.8-1.4.6-2.5-1-4.2-2.7-5.2-5.2-.2-.6.1-1.2.6-1.4l1.2-.4c.5-.2 1 0 1.3.4l.7 1c.2.3.2.7 0 1l-.5.7c.4.8 1 1.4 1.8 1.8l.7-.5c.3-.2.7-.2 1 0l1 .7c.4.3.6.8.4 1.3l-.4 1.2z"/>
+          </svg>
+        </a>
+
+    </div>
+  </div>
+  </section>
+</main>
+
+  <!-- GSAP -->
+  <!--<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>-->
+  <script src="script.js"></script>
+</body>
+
+</html>
