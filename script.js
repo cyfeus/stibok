@@ -61,6 +61,11 @@ function initSceneSystem(){
   const bgMachine = document.getElementById("bgMachine");
   const bgThreads = document.getElementById("bgThreads");
 
+  if (window.innerWidth <= 600){
+  gsap.set(bgMachine, { scale: 1 });
+  gsap.set(bgThreads, { scale: 0.4 });
+}
+
   const headerST = []; // <-- сюда соберём триггеры, которые “скрабят” header
 
   // --- стартовые состояния ---
@@ -344,6 +349,7 @@ function initMouseParallax(){
 
 //параллакс для одежды
 function initClothesParallax(){
+  if (window.innerWidth <= 600) return;
   const items = document.querySelectorAll(".cloth-card__media");
   if (!items.length) return;
 
@@ -453,6 +459,18 @@ function initClothesReveal(){
   });
 }
 
+function forceMobileClothCenter(){
+  if (window.innerWidth > 600) return;
+
+  document.querySelectorAll(".cloth-card").forEach(card => {
+    gsap.set(card, { clearProps: "transform,x,y,rotation,scale" });
+  });
+
+  document.querySelectorAll(".cloth-card__media").forEach(media => {
+    gsap.set(media, { clearProps: "transform,x,y,rotation,scale" });
+  });
+}
+
 //появление заголовков
 function initTitleAnimations(){
 
@@ -526,6 +544,27 @@ function initTextRevealAndBreath(){
       onEnterBack: () => breathTl.play(),
       onLeaveBack: () => breathTl.pause(0)
     });
+  });
+}
+
+function initFooterReveal(){
+  const footer = document.querySelector(".scene--footer .footer");
+  if (!footer) return;
+
+  const tagline = footer.querySelector(".footer__tagline");
+  const contacts = footer.querySelector(".footer__contacts");
+
+  gsap.to([tagline, contacts], {
+    autoAlpha: 1,
+    y: 0,
+    duration: 0.9,
+    ease: "power3.out",
+    stagger: 0.15,
+    scrollTrigger: {
+      trigger: footer,
+      start: "top 70%",
+      once: true
+    }
   });
 }
 
@@ -620,7 +659,9 @@ function initModal(){
   if (!total) return;
 
   const duration = animate ? 0.55 : 0;
-  const step = 240; // расстояние между центрами
+  //const step = 240; // расстояние между центрами
+  const vw = window.innerWidth;
+  const step = vw < 420 ? 140 : vw < 600 ? 170 : vw < 900 ? 210 : 240;
 
   slides.forEach((slide, i) => {
 
@@ -1203,9 +1244,11 @@ tl.add(() => {
   initMouseParallax();
   initNeedlesBreath();
   initClothesReveal();
+  forceMobileClothCenter();
   initTitleAnimations();
   initClothesParallax();
   initTextRevealAndBreath();
+  initFooterReveal();
   initModal();
   initMenu();
 });
@@ -1268,7 +1311,8 @@ function initScrollHeader(){
 });
 
   // header shrink / logo move 
-  tlScroll.to(header, { height: "120px", ease: "none" }, 0);
+  const headerMin = window.innerWidth <= 600 ? 70 : 120;
+  tlScroll.to(header, { height: headerMin + "px", ease: "none" }, 0);
 
   tlScroll.to(logoSlot, {
     xPercent: 0,
@@ -1276,7 +1320,9 @@ function initScrollHeader(){
     x: () => {
       const innerRect = inner.getBoundingClientRect();
       const slotRect  = logoSlot.getBoundingClientRect();
-      const desiredLeft = innerRect.left - 140; // твой -140
+      const isMobile = window.innerWidth <= 600;
+      const pad = isMobile ? 14 : 40;      // как твой header padding
+      const desiredLeft = innerRect.left + pad; // хотим к левому padding
       return desiredLeft - slotRect.left;
     },
     scale: 0.55,
