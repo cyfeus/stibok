@@ -13,7 +13,10 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   
 </head>
-    <div class="modal" id="modal">
+    
+<body>
+  <!-- Modal -->
+  <div class="modal" id="modal">
       <div class="modal__overlay" id="modalOverlay"></div>
 
       <div class="modal__inner">
@@ -29,8 +32,6 @@
         </div>
       </div>
     </div>
-<body>
-
   <!-- Loader / Intro -->
   <div class="loader" id="loader">
     <div class="intro">
@@ -67,8 +68,9 @@
         <!-- сюда JS в конце положит статичный логотип -->
       </div>
 
-      <!-- машинка (пока файл можно назвать machine.png) -->
+      <!-- машинка  -->
       <img class="machine" id="machine" src="machine.png" alt="Швейна машинка" />
+      <!-- бургер  -->
       <button class="burger-hit" id="burgerHit" type="button" aria-label="Меню">
         <div class="burger burger--needles" id="burger">
         <div class="needle-row needle-row--1">
@@ -90,6 +92,7 @@
         </div>
         </div>
       </button>
+      <!-- меню  -->
       <nav class="menu" id="menu" aria-hidden="true">
         <ul class="menu__list">
           <li><a class="menu__link" href="#tshirt">Футболки</a></li>
