@@ -548,27 +548,20 @@ function initModal(){
 
   // карта галерей 
   async function loadGallery(type, max = 12){
-  const out = [];
-  const exts = ["jpg","png","webp"];
+    const out = [];
+    const exts = ["jpg","png","webp"];
 
-  for (let i = 1; i <= max; i++){
-    let found = false;
+      for (let i = 1; i <= max; i++){
+      const candidates = exts.map(ext => `gallery/${type}/${i}.${ext}`);
+      const results = await Promise.all(candidates.map(url => probeImage(url)));
+      const foundIndex = results.findIndex(Boolean);
 
-    for (const ext of exts){
-      const url = `gallery/${type}/${i}.${ext}`;
-      const ok = await probeImage(url);
-      if (ok){
-        out.push(url);
-        found = true;
+      if (foundIndex !== -1) {
+        out.push(candidates[foundIndex]);
+      } else if (i >= 3) {
         break;
       }
     }
-
-    // если на каком-то номере ничего не нашли — можно продолжать,
-    // но обычно это значит “файлы закончились”
-    if (!found && i >= 3) break;
-  }
-
     return out;
   }
 
@@ -595,6 +588,8 @@ function initModal(){
   let flyEl = null;
   let activeCard = null;
   let activeSceneText = null;
+
+  const galleryCache = new Map(); // type -> [urls]
 
   function buildCarousel(imgs){
     carousel.innerHTML = "";
@@ -645,8 +640,6 @@ function initModal(){
       abs === 2 ? 0.7 :
       0.5;
 
-    //const alpha =
-    //  abs <= 2 ? 1 : 0;
     const alpha =
       abs === 0 ? 1 :
       abs === 1 ? 0.65 :
@@ -675,13 +668,6 @@ function initModal(){
       ease: "power3.out"
     });
   });
-  }
-
-  function makeAtLeastFive(list){
-    if (list.length >= 5) return list;
-    const out = [];
-    while (out.length < 5) out.push(list[out.length % list.length]);
-    return out;
   }
 
   function createFlyFromCard(card){
@@ -750,14 +736,16 @@ function initModal(){
     // карусель
     images = makeAtLeastFive(imgs);
     index = 0;
-    buildCarousel(images);
 
-    // ждём картинки — иначе первая отрисовка пустая/не меряется
-    waitImages().then(() => {
-      // стартовые состояния
-      gsap.set(track.children, { autoAlpha: 1, scale: 1, filter: "blur(0px)" });
-      applyState(false);
-    });
+    if (images.length) {
+      buildCarousel(images);
+      waitImages().then(() => {
+        gsap.set(track.children, { autoAlpha: 1, scale: 1, filter: "blur(0px)" });
+        applyState(false);
+      });
+    } else {
+      carousel.innerHTML = ""; // пусто, пока грузим
+    }
 
     // “одежда в центр над модалкой” (но не поверх)
     if (flyEl){
@@ -821,20 +809,12 @@ function initModal(){
   overlay.addEventListener("click", closeModal);
   window.addEventListener("keydown", (e) => { if (e.key === "Escape" && window.__modalOpen) closeModal(); });
 
-  // ✅ стрелки
+  //  стрелки
   nextBtn?.addEventListener("click", next);
   prevBtn?.addEventListener("click", prev);
 
-  // ✅ открытие по клику
+  //  открытие по клику
   /*cards.forEach(card => {
-    card.addEventListener("click", () => {
-      const type = card.dataset.cloth;
-      const imgs = galleries[type];
-      if (!imgs || !imgs.length) return;
-      openModal(card, imgs);
-    });
-  });*/
-  cards.forEach(card => {
   card.addEventListener("click", async () => {
     const type = card.dataset.cloth; // tshirt / dress / suit / dog-suit
 
@@ -848,6 +828,36 @@ function initModal(){
     const imgs = makeAtLeastFive(imgsRaw);
     openModal(card, imgs);
   });
+  });*/
+    cards.forEach(card => {
+    card.addEventListener("click", async () => {
+      const type = card.dataset.cloth;
+
+      // 1) мгновенно показываем модалку (без карусели пока)
+      openModal(card, []); // откроется, а карусель догрузим ниже
+
+      // 2) берем из кэша или грузим
+      let imgsRaw = galleryCache.get(type);
+      if (!imgsRaw) {
+        imgsRaw = await loadGallery(type, 12);
+        galleryCache.set(type, imgsRaw);
+      }
+
+      if (!imgsRaw.length){
+        console.warn("[modal] no images in", `gallery/${type}/`);
+        closeModal();
+        return;
+      }
+
+      // 3) перестраиваем карусель уже с картинками
+      images = makeAtLeastFive(imgsRaw);
+      index = 0;
+      buildCarousel(images);
+
+      await waitImages();
+      gsap.set(track.children, { autoAlpha: 1, scale: 1, filter: "blur(0px)" });
+      applyState(false);
+    });
   });
 }
 
