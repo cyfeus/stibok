@@ -35,6 +35,11 @@
   --modal-ink: #3D2B14;
   --modal-btn-bg: rgba(255,255,255,.65);
   --modal-btn-border: rgba(0,0,0,.12);
+
+  --logoW: 430px;
+  --logoH: 115px;
+  --machineH: 440px;
+  --pageTop: 365px;
 }
 
 /* base */
@@ -79,7 +84,7 @@ body {
 }
 
 .logo-big svg{
-  width: 430px;            /* большой размер можно менять */
+  width: var(--logoW);            /* большой размер можно менять */
   height: auto;
   display: block;
   margin: 0 auto;
@@ -154,8 +159,8 @@ body.is-locked{
 }
 
 .logo-slot svg{
-  width: 430px;  /* финальный размер по ширине */
-  height: 115px; /* высота, как ты сказал */
+  width: var(--logoW);
+  height: var(--logoH);
   display: block;
 }
 
@@ -165,15 +170,15 @@ body.is-locked{
   right: 40px;
   top: 50%;
   transform: translateY(-50%); /* только Y */
-  height: 440px;
+  height: var(--machineH);
   width: auto;
   opacity: 0;
   will-change: transform, opacity;
 }
 
 .logo-slot svg.header-logo{
-  width: 430px;     /* твой хедерный размер */
-  height: 115px;
+  width: var(--logoW);
+  height: var(--logoH);
   display: block;
 }
 
@@ -268,7 +273,7 @@ body.is-locked{
 }
 
 .page{ 
-  padding-top: 365px; 
+  padding-top: var(--pageTop); 
   position: relative; 
   z-index: 10;} /* у тебя так и было через inline, лучше сюда */
 
@@ -356,24 +361,6 @@ body.is-locked{
   grid-template-areas: "img text";
 }
 
-/* мобилка/узко: в столбик */
-@media (max-width: 900px){
-  .scene__content{
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "text"
-      "img";
-    gap: 28px;
-  }
-
-  /* для left-сцен: сначала картинка, потом текст */
-  .scene--img-left .scene__content{
-    grid-template-areas:
-      "img"
-      "text";
-  }
-}
-
 .scene__text{
   margin-bottom: 60px;
 }
@@ -442,6 +429,12 @@ body.is-locked{
 
   min-height: 70px;                       /* “место под пиктограммы” */
   padding-top: 10px;
+}
+
+.footer__tagline,
+.footer__contacts{
+  opacity: 0;
+  transform: translateY(18px);
 }
 
 /* временный стиль для текстовых ссылок (потом заменим на иконки) */
@@ -811,5 +804,222 @@ header[data-theme="dark"]{
 /* опционально, чтобы hover не выглядел грязно на тёмном */
 header[data-theme="dark"] .menu__link:hover{
   background: rgba(255,255,255,0.12);
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+/* мобилка/узко: в столбик */
+@media (max-width: 900px){
+  .scene__content{
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "text"
+      "img";
+    gap: 28px;
+  }
+
+  /* для left-сцен: сначала картинка, потом текст */
+  .scene--img-left .scene__content{
+    grid-template-areas:
+      "text"
+      "img"
+      ;
+  }
+}
+
+/* планшеты */
+@media (max-width: 1024px){
+  :root{
+    --headerH: 260px;
+    --logoW: 340px;
+    --logoH: 92px;
+    --machineH: 300px;
+    --pageTop: 260px;
+  }
+
+  .header-inner{ padding: 0 22px; }
+  .machine{ right: 22px; }
+  .burger-hit{ right: 22px; }
+
+  .scene{ padding: 34px 16px; }
+  .scene__content{ padding: 42px 22px; gap: 44px; }
+  .scene__title{ font-size: 40px; }
+}
+
+/* телефоны */
+@media (max-width: 600px){
+  :root{
+    --headerH: 180px;
+    --logoW: 240px;
+    --logoH: 64px;
+    --machineH: 210px;
+    --pageTop: 180px;
+  }
+
+  .intro{
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .logo-big svg{
+    width: min(68vw, 240px);
+    margin: 0 auto;
+  }
+
+  .reveal-text{
+    white-space: normal;     /* вместо nowrap */
+    max-width: 92vw;
+    margin-inline: auto;
+    letter-spacing: 0.10em;
+    text-wrap: balance;
+  }
+
+  .loader-text{
+    max-width: 92vw;
+    margin-inline: auto;
+    letter-spacing: 0.10em;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .start-btn{
+    letter-spacing: 0.10em;
+    font-size: 18px;
+  }
+
+  .reveal-text{
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  body{ letter-spacing: 0.10em; }
+  .header-inner{ padding: 0 14px; }
+
+  .logo-slot{
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .machine{ right: 14px; opacity: 0.12; }
+  .burger{ width: 74px; height: 52px; }
+  .burger-hit{ right: 14px; top: 0px; transform: none; }
+
+   /* машинка фона */
+  .bg-machine{
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.06;   /* чуть мягче, чтобы не давила */
+    top: 72%;
+  }
+
+  /* нитки */
+  .bg-threads{
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0.25;
+  }
+
+
+  /* меню — чтобы не улетало и было читабельно */
+  .menu{
+    right: 14px;
+    width: min(320px, calc(100vw - 28px));
+    top: 70px;
+  }
+
+  .scene{
+    min-height: auto;       /* убираем 120vh */
+    padding: 28px 14px;
+  }
+
+  .scene__content{
+    padding: 26px 14px;
+    gap: 18px;
+  }
+
+  .scene__text{
+    margin-bottom: 14px;
+    max-width: 100%;
+  }
+
+  /* сцены — типографика */
+  .scene__title{
+    font-size: 28px;
+    letter-spacing: 0.12em;
+    margin-bottom: 26px;
+  }
+
+  .scene__body{
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    line-height: 1.55;
+  }
+
+  /* одежда — чтобы не вылезала за экран */
+  .cloth-card{ display: grid; place-items: center; margin: 10px auto 0; }
+  .cloth-card__img{ height: min(66vh, 420px); transform: translateX(var(--cloth-shift-x, 0px));}
+  .scene--tshirt .cloth-card__img{ height: min(72vh, 560px); }
+
+   .scene--dress{ --cloth-shift-x: -48px; }
+
+  /* пиджак: обычно тоже нужно, но меньше/в другую сторону */
+  .scene--suit{ --cloth-shift-x: -42px; }
+
+   .cloth-card__media{
+    transform: none !important;
+  }
+
+  /* модалка */
+  .modal__inner{
+    width: calc(100vw - 18px);
+    height: 74vh;
+    bottom: 10px;
+    border-radius: 18px;
+  }
+
+  .modal__slide img{
+    height: 38vh;
+    max-height: 420px;
+  }
+
+  .modal__nav{ padding: 0 10px; }
+  .modal__nav button{
+    width: 42px;
+    height: 48px;
+    font-size: 40px;
+  }
+  .modal__nav button span{ transform: translateY(-1px); }
+
+  .modal__close{
+    top: 12px;
+    right: 12px;
+    width: 42px;
+    height: 42px;
+  }
+
+  /* футер */
+  .scene--footer{
+    min-height: 100svh;   /* именно svh для мобильных */
+    background: var(--intro-bg); /* чтобы точно не просвечивал общий фон */
+  }
+  .footer{ 
+    padding: 90px 18px 70px; 
+    min-height: 100svh;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;}
+  .footer__tagline{ font-size: 22px; letter-spacing: 0.12em; }
+}
+
+/* маленькие телефоны */
+@media (max-width: 380px){
+  :root{
+    --logoW: 210px;
+    --logoH: 56px;
+  }
+  .scene__title{ font-size: 24px; }
 }
 
